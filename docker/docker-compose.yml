@@ -1,11 +1,9 @@
-version: '2'
+version: '3'
 services:
   zookeeper:
     image: wurstmeister/zookeeper:3.4.6
-    ports:
-      - "2181:2181"
   kafka:
-    image: wurstmeister/kafka:0.10.2.1
+    image: wurstmeister/kafka:2.12-2.3.1
     links:
      - zookeeper
     environment:
@@ -32,19 +30,19 @@ services:
      - kafka
      - postgres
     environment:
-      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
   shipping:
     build: ../microservice-kafka/microservice-kafka-shipping
     links:
      - kafka
      - postgres
     environment:
-      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
   invoicing:
     build: ../microservice-kafka/microservice-kafka-invoicing
     links:
      - kafka
      - postgres
     environment:
-      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 

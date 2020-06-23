@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = InvoiceTestApp.class, webEnvironment = WebEnvironment.NONE)
 @ActiveProfiles("test")
 public class InvoicingServiceTest {
@@ -33,13 +33,13 @@ public class InvoicingServiceTest {
 				new Date(0L), new Address("Krischstr. 100", "40789", "Monheim am Rhein"), new ArrayList<InvoiceLine>());
 		invoiceService.generateInvoice(invoice);
 		assertThat(invoiceRepository.count(), is(countBefore + 1));
-		assertThat(invoiceRepository.findOne(42L).getUpdated().getTime(), equalTo(0L));
+		assertThat(invoiceRepository.findById(42L).get().getUpdated().getTime(), equalTo(0L));
 		invoice = new Invoice(42,
 				new Customer(23, "Eberhard", "Wolff", "eberhard.wolff@innoq.com"),
 				new Date(), new Address("Krischstr. 100", "40789", "Monheim am Rhein"), new ArrayList<InvoiceLine>());
 		invoiceService.generateInvoice(invoice);
 		assertThat(invoiceRepository.count(), is(countBefore + 1));
-		assertThat(invoiceRepository.findOne(42L).getUpdated().getTime(), equalTo(0L));
+		assertThat(invoiceRepository.findById(42L).get().getUpdated().getTime(), equalTo(0L));
 	}
 
 }

@@ -10,13 +10,13 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.test.rule.KafkaEmbedded;
+import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -27,7 +27,7 @@ import com.ewolff.microservice.order.customer.CustomerRepository;
 import com.ewolff.microservice.order.item.Item;
 import com.ewolff.microservice.order.item.ItemRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = OrderApp.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class OrderWebIntegrationTest {
@@ -51,11 +51,11 @@ public class OrderWebIntegrationTest {
 	private Customer customer;
 
 	@ClassRule
-	public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, "order");
+	public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(1, false, "order");
 
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		System.setProperty("spring.kafka.bootstrap-servers", embeddedKafka.getBrokersAsString());
+	public static void setUpBeforeClass() {
+		System.setProperty("spring.kafka.bootstrap-servers", embeddedKafka.getEmbeddedKafka().getBrokersAsString());
 	}
 
 	@Before
@@ -91,7 +91,7 @@ public class OrderWebIntegrationTest {
 
 	@Test
 	public void IsOrderFormDisplayed() {
-		ResponseEntity<String> resultEntity = restTemplate.getForEntity(orderURL() + "/form", String.class);
+		ResponseEntity<String> resultEntity = restTemplate.getForEntity(orderURL() + "/form.html", String.class);
 		assertTrue(resultEntity.getStatusCode().is2xxSuccessful());
 		assertTrue(resultEntity.getBody().contains("<form"));
 	}
